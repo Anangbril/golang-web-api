@@ -8,19 +8,22 @@ import (
 
 func main() {
 	router := gin.Default()
-	router.GET("/", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{
-			"message": "pong",
-			"subject": "clue olahraga",
-		})
-	})
+	router.GET("/", routerHandler)
 
-	router.GET("/hello", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{
-			"nama":          "LM. ANANG BRILYANSYAH",
-			"Jenis Kelamin": "Pria",
-		})
-	})
+	router.GET("/hello", helloHandler)
 
 	router.Run(":8081")
+}
+
+func routerHandler(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{
+		"content": "belajar dasar web api dengan lybrary gin",
+	})
+}
+
+func helloHandler(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{
+		"nama":          "LM. ANANG BRILYANSYAH",
+		"Jenis Kelamin": "Pria",
+	})
 }
