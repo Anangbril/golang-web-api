@@ -1,0 +1,7 @@
+gin adalah library third party
+
+
+1. membuat sebuah directory
+2. init project "go mod init pustaka-api" kedalam project
+3. menginstal  gin library "go get -u github.com/gin-gonic/gin"
+4. 
