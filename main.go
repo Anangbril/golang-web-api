@@ -11,12 +11,13 @@ import (
 
 func main() {
 	router := gin.Default()
-	router.GET("/", routerHandler)
-	router.GET("/hello", helloHandler)
-	router.GET("/books/:id/:title", booksHandler) //this is path variable
-	router.GET("/query", queryHandler)            //this is query string
+	v1 := router.Group("/v1")
+	v1.GET("/", routerHandler)
+	v1.GET("/hello", helloHandler)
+	v1.GET("/books/:id/:title", booksHandler) //this is path variable
+	v1.GET("/query", queryHandler)            //this is query string
 
-	router.POST("/books", postBooksHandler)
+	v1.POST("/books", postBooksHandler)
 
 	router.Run()
 }
@@ -53,24 +54,28 @@ func queryHandler(c *gin.Context) {
 }
 
 type BookInput struct {
-	Title    string      `json:"Title" binding:"required"`
-	Price    json.Number `json:"Price" binding:"required,number"`
-	SubTitle string      `json:"sub_title"`
+	Title string      `json:"Title" binding:"required"`
+	Price json.Number `json:"Price" binding:"required,number"`
+	// SubTitle string      `json:"sub_title"`
 }
 
 func postBooksHandler(c *gin.Context) {
 	var bookInput BookInput
 	err := c.ShouldBindJSON(&bookInput)
 	if err != nil {
+		errorMessages := []string{}
 		for _, e := range err.(validator.ValidationErrors) {
 			errorMessage := fmt.Sprintf("Error on fields %s, condition : %s", e.Field(), e.ActualTag())
-			c.JSON(http.StatusBadRequest, errorMessage)
+			errorMessages = append(errorMessages, errorMessage)
+			c.JSON(http.StatusBadRequest, gin.H{
+				"errors": errorMessages,
+			})
 			return
 		}
 	}
 	c.JSON(http.StatusOK, gin.H{
-		"title":    bookInput.Title,
-		"price":    bookInput.Price,
-		"SubTitle": bookInput.SubTitle,
+		"title": bookInput.Title,
+		"price": bookInput.Price,
+		// "SubTitle": bookInput.SubTitle,
 	})
 }
